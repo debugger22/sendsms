@@ -5,9 +5,9 @@
 # @Online http://github.com/siddhant3s/sendsms
 # @Requires Python2.7 or (Python2.x with argparse.py)
 # @Lisense BSD License 
+# @Requires an external library called mp3play 
 
-
-import urllib, urllib2, urlparse, re, argparse, ConfigParser, os.path, getpass,sys,logging, cookielib
+import urllib, urllib2, urlparse, re, argparse, ConfigParser, os.path, getpass,sys,logging, cookielib,mp3play,time
 
 default_auth_file=os.path.expanduser('~/.sendsms.auth')
 ### Command Line Praser's Arguements
@@ -241,11 +241,17 @@ for n in senders_numbers:
                 sys.exit(3)
         result=sendmessage(n,message)
         if result=='sent':
-            loginfo("Seems Like message was successfully sent to %s." % n)
-            loginfo("\a")
+            filename = r'sent.mp3'
+            clip = mp3play.load(filename)
+            clip.play()
+            time.sleep(min(30, clip.seconds())) 
+            clip.stop()
+            loginfo("Message was successfully sent to %s." % n)
+            
             break
         elif result=='failed':
             loginfo("SMS Not sent to %s. Can't figure out why. Perhaps try again later\n" % n)
+            loginfo("\a")
             break
         elif result=='login':
             try_with_previous=False
